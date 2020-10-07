@@ -27,13 +27,13 @@ typedef enum RTC_registers
 
 typedef struct Time_data
 {
-	uint8_t seconds;
-	uint8_t minutes;
-	uint8_t hours;
-	uint8_t weekday;
-	uint8_t day;
-	uint8_t month;
-	uint8_t year;
+	volatile uint8_t seconds;
+	volatile uint8_t minutes;
+	volatile uint8_t hours;
+	volatile uint8_t weekday;
+	volatile uint8_t day;
+	volatile uint8_t month;
+	volatile uint8_t year;
 }T_Time_data;
 
 //T_Time_data time;
