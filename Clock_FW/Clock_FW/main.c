@@ -43,8 +43,10 @@ T_btn_press btn_press = {
 	.btnEXIT_pressed = 0
 };
 uint8_t status, i, time_done = 1;
-char read_data[10];
-char uart_string[20];
+uint8_t read_data[10];
+uint8_t uart_string[20];
+uint8_t hours = 0, minutes = 0, day = 8, month = 10;
+uint16_t year = 2020; 
 
 int main(void)
 {
@@ -67,7 +69,7 @@ int main(void)
 	_delay_ms(1000);
 
 	DS3231_initialization();
-	DS3231_setTime(19,4,5,10,2020);
+	DS3231_setTime(23,58,5,10,2020);
 	
 	/*btn_press.btnDOWN_pressed = 0;
 	btn_press.btnUP_pressed = 0;
@@ -87,7 +89,7 @@ int main(void)
 
 			time_done = 1;
 		}
-		if (btn_press.btnDOWN_pressed > 10)
+		/*if (btn_press.btnDOWN_pressed > 10)
 		{
 			uart_puts("DOWN\r\n");
 			_delay_ms(10);
@@ -98,20 +100,45 @@ int main(void)
 			uart_puts("UP\r\n");
 			_delay_ms(10);
 			btn_press.btnUP_pressed = 0;
-		}
-		if (btn_press.btnOK_MENU_pressed > 10)
+		}*/
+		
+		if (btn_press.btnOK_MENU_pressed > 50)
 		{
+			GICR &= ~(1<<INT0);			//external interrupt disable
 			uart_puts("MENU_OK\r\n");
 			_delay_ms(10);
+			while(btn_press.btnEXIT_pressed < 50)
+			{
+				if (btn_press.btnDOWN_pressed > 10)
+				{
+					hours--;
+					uart_puts("DOWN\r\n");
+					_delay_ms(10);
+					btn_press.btnDOWN_pressed = 0;
+				}
+				if (btn_press.btnUP_pressed > 10)
+				{
+					hours++;
+					uart_puts("UP\r\n");
+					_delay_ms(10);
+					btn_press.btnUP_pressed = 0;
+				}
+			}
+			uart_puts("EXIT\r\n");
+			_delay_ms(10);
+			DS3231_setTime(hours,minutes,day,month,year);
+			GICR |= (1<<INT0);			//external interrupt enable
+			//_delay_ms(10);
 			btn_press.btnOK_MENU_pressed = 0;
 		}
-		if (btn_press.btnEXIT_pressed > 10)
+		
+		/*if (btn_press.btnEXIT_pressed > 10)
 		{
 			uart_puts("EXIT\r\n");
 			_delay_ms(10);
 			btn_press.btnEXIT_pressed = 0;
-		}
-		_delay_us(1);
+		}*/
+		//_delay_ms(1);
 	
     }
 }
